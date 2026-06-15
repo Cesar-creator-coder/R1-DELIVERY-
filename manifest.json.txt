@@ -1,0 +1,21 @@
+{
+  "name": "R1 AMOBI",
+  "short_name": "R1 AMOBI",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#adff2f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/DzPJQ6RC/20260614-073209-0000.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.postimg.cc/DzPJQ6RC/20260614-073209-0000.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
