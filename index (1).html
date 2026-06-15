@@ -1,0 +1,399 @@
+<!DOCTYPE html>  
+<html lang="pt-BR">  
+<head>  
+ <meta charset="UTF-8">  
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+ <title>R1 AMOBI | Conectando Você Ao Que Importa</title>  
+ <link rel="manifest" href="manifest.json">  
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>  
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>  
+ <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>  
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+  
+ <style>  
+ :root { 
+     --green: #adff2f; 
+     --blue: #00d9ff; 
+     --bg: #000; 
+     --card-bg: #0a0a0c; 
+     --red: #ff3333; 
+     --gray-text: #8e8e93;
+     --border-color: #16161a;
+ }  
+ * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', -apple-system, sans-serif; }  
+ body { background: var(--bg); color: #fff; padding-bottom: 110px; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }  
+ .container { max-width: 480px; margin: 0 auto; padding: 0 15px; }  
+  
+ /* HEADER & BRANDING */  
+ .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5px; }  
+ .logo-container { text-align: center; margin: 10px 0 25px 0; }  
+ .logo-ring { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--green); margin: 0 auto 15px; cursor: pointer; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(173, 255, 47, 0.3); }  
+ .logo-ring img { width: 100%; height: 100%; object-fit: cover; }  
+ .brand-title { font-size: 32px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }  
+ .brand-subtitle { font-size: 10px; font-weight: 800; color: var(--green); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }  
+  
+ /* MENU SUPERIOR EM 3 COLUNAS */  
+ .top-menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }  
+ .top-btn { background: #121214; border: 1px solid var(--border-color); border-radius: 16px; padding: 14px 8px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; transition: transform 0.2s; }  
+ .top-btn:active { transform: scale(0.95); }
+ .top-btn i { font-size: 18px; }  
+ .top-btn .t-title { font-size: 10px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }  
+ .top-btn .t-sub { font-size: 8px; font-weight: 700; color: var(--gray-text); text-transform: uppercase; }  
+  
+ /* SEÇÕES HEADERS */  
+ .section-header { display: flex; justify-content: space-between; align-items: center; margin: 25px 0 15px 0; padding-left: 6px; border-left: 3px solid var(--green); }  
+ .section-header h2 { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; }  
+ .ver-todos { font-size: 11px; color: var(--green); text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 4px; }  
+  
+ /* NOSSOS SERVIÇOS (VERTICAL CARDS IGUAL À IMAGEM) */  
+ .services-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }  
+ .service-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 250px; position: relative; }  
+ .service-card-bg { position: absolute; top: 0; left: 0; width: 100%; height: 110px; background-size: cover; background-position: center; filter: brightness(0.7); z-index: 1; }
+ .service-card-body { position: relative; z-index: 2; padding: 12px; display: flex; flex-direction: column; height: 100%; justify-content: space-between; flex: 1; }
+ .service-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; margin-bottom: 75px; z-index: 3; }  
+ .service-text-wrapper { margin-bottom: 12px; margin-top: auto; }
+ .service-title { font-size: 11px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }  
+ .service-desc { font-size: 8.5px; color: #b3b3b3; line-height: 1.3; }  
+ .service-action { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #222; color: #fff; padding: 8px 10px; border-radius: 10px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }  
+ .service-action:active { background: rgba(255,255,255,0.1); }
+  
+ /* CARROSSEL DE DESTAQUES */  
+ .carousel-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 25px; }
+ .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; width: 100%; scroll-behavior: smooth; }
+ .carousel-track::-webkit-scrollbar { display: none; }
+ .carousel-item { flex: 0 0 calc(50% - 6px); scroll-snap-align: start; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 15px; min-height: 125px; display: flex; flex-direction: column; justify-content: space-between; position: relative; background-size: cover; background-position: center; overflow: hidden; }
+ .carousel-item::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 1; }
+ .carousel-item-content { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: space-between; height: 100%; flex: 1; }
+ .carousel-tag { font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+ .carousel-title { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; line-height: 1.2; }
+ .carousel-desc { font-size: 8px; color: #b3b3b3; margin-bottom: 10px; line-height: 1.2; }
+ .carousel-btn { align-self: flex-start; border: none; padding: 6px 12px; border-radius: 8px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; color: #fff; }
+ .carousel-arrow { position: absolute; width: 28px; height: 28px; background: rgba(255,255,255,0.05); border: 1px solid #222; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; z-index: 5; cursor: pointer; }
+ .arrow-left { left: -10px; }
+ .arrow-right { right: -10px; }
+  
+ /* POR QUE USAR R1? */  
+ .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; padding: 5px 0; }  
+ .feature-item { display: flex; align-items: flex-start; gap: 10px; }  
+ .feature-icon { font-size: 16px; margin-top: 2px; }  
+ .feature-info h4 { font-size: 10.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; letter-spacing: 0.3px; }  
+ .feature-info p { font-size: 9px; color: var(--gray-text); line-height: 1.2; }  
+  
+ /* MODAIS */  
+ .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 1000; padding: 20px; overflow-y: auto; }  
+ .modal-content { background: #000; border-radius: 25px; border: 1px solid var(--border-color); max-width: 450px; margin: 40px auto; padding: 25px; position: relative; }  
+ .close { position: absolute; top: 15px; right: 15px; font-size: 24px; color: #444; cursor: pointer; }  
+ input, select { width: 100%; padding: 12px; margin: 8px 0; background: #0a0a0c; border: 1px solid var(--border-color); color: #fff; border-radius: 12px; font-size: 13px; }  
+ .btn-main { background: var(--green); color: #000; padding: 15px; width: 100%; border: none; font-weight: 900; border-radius: 12px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }  
+ .item-row { background: #111; padding: 12px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 12px; }  
+  
+ /* NAV INFERIOR DEFINITIVA 100% IGUAL À IMAGEM */  
+ .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #000000; height: 75px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #121212; z-index: 999; padding-bottom: env(safe-area-inset-bottom); }  
+ .nav-item { color: #8a8a8f; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; gap: 5px; cursor: pointer; background: none; border: none; width: 65px; height: 100%; }  
+ .nav-item i { font-size: 18px; }  
+ .nav-item.active { color: var(--green); }  
+ .nav-item-box-active { border: 1px solid rgba(173,255,47,0.15); background: rgba(173,255,47,0.02); border-radius: 14px; padding: 6px 10px; color: var(--green) !important; }
+ </style>  
+</head>  
+<body>  
+  
+ <div class="container">  
+ <div class="top-nav">  
+ <div onclick="compartilhar()" style="cursor:pointer; font-size:16px;">📤</div>  
+ <span style="font-size:9px; font-weight:bold; color:#1c1c1e;">R1 ECOSSISTEMA v3.6</span>  
+ <div onclick="location.reload()" style="cursor:pointer; font-size:16px;">🔄</div>  
+ </div>  
+  
+ <div class="logo-container">  
+ <div class="logo-ring" onclick="checkAdmin()">  
+ <img src="https://i.postimg.cc/DzPJQ6RC/20260614-073209-0000.png">  
+ </div>  
+ <h1 class="brand-title">R1 AMOBI</h1>  
+ <p class="brand-subtitle">Conectando você ao que importa!</p>  
+ </div>  
+  
+ <div class="top-menu">  
+ <div class="top-btn" onclick="alert('R1 AMOBI - Conectando você ao que importa!')">  
+ <i class="fa-solid fa-users" style="color: var(--green);"></i>  
+ <span class="t-title">Quem Somos</span>  
+ <span class="t-sub">Apresentação</span>  
+ </div>  
+ <div class="top-btn" onclick="openM('m-guide')">  
+ <i class="fa-solid fa-handshake" style="color: var(--blue);"></i>  
+ <span class="t-title">Guia Comercial</span>  
+ <span class="t-sub">Parceiros</span>  
+ </div>  
+ <div class="top-btn" onclick="openM('m-join')">  
+ <i class="fa-solid fa-user-plus" style="color: #fff;"></i>  
+ <span class="t-title">Seja Um</span>  
+ <span class="t-sub">Parceiro R1</span>  
+ </div>  
+ </div>  
+  
+ <div class="section-header">  
+ <h2>Nossos Serviços</h2>  
+ <a href="#" class="ver-todos" onclick="openM('m-guide')">Ver todos <i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></a>  
+ </div>  
+  
+ <div class="services-container">  
+ <div class="service-card">  
+ <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=300&auto=format&fit=crop');"></div>  
+ <div class="service-card-body">  
+ <div class="service-icon" style="background: rgba(173,255,47,0.2); color: var(--green);"><i class="fa-solid fa-motorcycle"></i></div>  
+ <div class="service-text-wrapper">  
+ <div class="service-title" style="color: var(--green);">Mototaxi R1</div>  
+ <div class="service-desc">Peça sua moto agora com segurança e agilidade.</div>  
+ </div>  
+ <button class="service-action" onclick="alert('Chamando Mototáxi R1...')">Acessar <i class="fa-solid fa-chevron-right" style="color:var(--green); font-size:8px;"></i></button>  
+ </div>  
+ </div>  
+  
+ <div class="service-card">  
+ <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1531925470851-1b5896b67dcd?q=80&w=300&auto=format&fit=crop');"></div>  
+ <div class="service-card-body">  
+ <div class="service-icon" style="background: rgba(255,51,51,0.2); color: var(--red);"><i class="fa-solid fa-box"></i></div>  
+ <div class="service-text-wrapper">  
+ <div class="service-title" style="color: var(--red);">Motoboy R1</div>  
+ <div class="service-desc">Coleta e Entrega Rápida de documentos e volumes.</div>  
+ </div>  
+ <button class="service-action" onclick="alert('Solicitando Motoboy R1...')">Acessar <i class="fa-solid fa-chevron-right" style="color:var(--red); font-size:8px;"></i></button>  
+ </div>  
+ </div>  
+  
+ <div class="service-card">  
+ <div class="service-card-bg" style="background-image: url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=300&auto=format&fit=crop');"></div>  
+ <div class="service-card-body">  
+ <div class="service-icon" style="background: rgba(0,217,255,0.2); color: var(--blue);"><i class="fa-solid fa-store"></i></div>  
+ <div class="service-text-wrapper">  
+ <div class="service-title" style="color: var(--blue);">Lojas Parceiras</div>  
+ <div class="service-desc">Encontre as melhores lojas da sua cidade.</div>  
+ </div>  
+ <button class="service-action" onclick="openM('m-guide')">Acessar <i class="fa-solid fa-chevron-right" style="color:var(--blue); font-size:8px;"></i></button>  
+ </div>  
+ </div>  
+ </div>  
+  
+ <div class="section-header">  
+ <h2>Destaques</h2>  
+ </div>  
+ <div class="carousel-wrapper">  
+ <div class="carousel-arrow arrow-left" onclick="scrollCarrossel(-150)"><i class="fa-solid fa-chevron-left"></i></div>  
+ <div class="carousel-track" id="carrosselTrack">  
+ <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1460555940567-9b840134f0d3?q=80&w=200&auto=format&fit=crop');">  
+ <div class="carousel-item-content">  
+ <div>  
+ <div class="carousel-tag" style="color: var(--green);">Ofertas Especiais</div>  
+ <div class="carousel-desc">Descontos imperdíveis todos os dias!</div>  
+ </div>  
+ <button class="carousel-btn" style="background: rgba(173,255,47,0.3); border: 1px solid var(--green);" onclick="alert('Abrindo Ofertas...')">Ver Ofertas</button>  
+ </div>  
+ </div>  
+ <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=200&auto=format&fit=crop');">  
+ <div class="carousel-item-content">  
+ <div>  
+ <div class="carousel-tag" style="color: var(--red);">Viagem Intermunicipal</div>  
+ <div class="carousel-desc">Viaje com conforto e segurança.</div>  
+ </div>  
+ <button class="carousel-btn" style="background: rgba(255,51,51,0.3); border: 1px solid var(--red);" onclick="alert('Abrindo Reservas...')">Reservar</button>  
+ </div>  
+ </div>  
+ <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=200&auto=format&fit=crop');">  
+ <div class="carousel-item-content">  
+ <div>  
+ <div class="carousel-tag" style="color: var(--blue);">Seja um Parceiro</div>  
+ <div class="carousel-desc">Aumente suas vendas com a R1 Delivery.</div>  
+ </div>  
+ <button class="carousel-btn" style="background: rgba(0,217,255,0.3); border: 1px solid var(--blue);" onclick="openM('m-join')">Saiba Mais</button>  
+ </div>  
+ </div>  
+ </div>  
+ <div class="carousel-arrow arrow-right" onclick="scrollCarrossel(150)"><i class="fa-solid fa-chevron-right"></i></div>  
+ </div>  
+  
+ <div class="section-header">  
+ <h2>Por que usar R1?</h2>  
+ </div>  
+ <div class="features-grid">  
+ <div class="feature-item">  
+ <i class="fa-regular fa-circle-check feature-icon" style="color: var(--green);"></i>  
+ <div class="feature-info"><h4>Segurança</h4><p>Serviços verificados e confiáveis</p></div>  
+ </div>  
+ <div class="feature-item">  
+ <i class="fa-solid fa-bolt feature-icon" style="color: var(--red);"></i>  
+ <div class="feature-info"><h4>Rapidez</h4><p>Entregas e corridas em minutos</p></div>  
+ </div>  
+ <div class="feature-item">  
+ <i class="fa-solid fa-circle-dollar-to-slot feature-icon" style="color: var(--blue);"></i>  
+ <div class="feature-info"><h4>Economia</h4><p>Preços justos e competitivos</p></div>  
+ </div>  
+ <div class="feature-item">  
+ <i class="fa-solid fa-headset feature-icon" style="color: #fff;"></i>  
+ <div class="feature-info"><h4>Suporte 24h</h4><p>Atendimento sempre que precisar</p></div>  
+ </div>  
+ </div>  
+  
+ <div id="lista-servicos"></div>  
+ </div>  
+  
+ <div id="m-guide" class="modal" onclick="fecharNoBackdrop(event, 'm-guide')">  
+ <div class="modal-content">  
+ <span class="close" onclick="closeM('m-guide')">&times;</span>  
+ <h3 style="margin-bottom:20px; color:var(--blue)">LOJAS EM ASSIS</h3>  
+ <div id="grid-lojas" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>  
+ </div>  
+ </div>  
+  
+ <div id="m-join" class="modal" onclick="fecharNoBackdrop(event, 'm-join')">  
+ <div class="modal-content">  
+ <span class="close" onclick="closeM('m-join')">&times;</span>  
+ <h3 style="color:var(--green); margin-bottom:15px;">PARCEIRO R1AMOBI</h3>  
+ <input type="text" id="p-loja-nome" placeholder="Nome da Loja / Empresa">  
+ <input type="text" id="p-resp-nome" placeholder="Nome do Responsável">  
+ <select id="p-segmento">  
+ <option value="">Selecione o Segmento</option>  
+ <option value="Alimentação">Alimentação</option>  
+ <option value="Farmácia">Farmácia</option>  
+ <option value="Distribuidora">Distribuidora</option>  
+ <option value="Outros">Outros</option>  
+ </select>  
+ <input type="tel" id="p-whatsapp" placeholder="WhatsApp com DDD">  
+ <input type="text" id="p-endereco" placeholder="Endereço Comercial">  
+ <button class="btn-main" onclick="salvarSolicitacaoParceiro()">ENVIAR MEU CADASTRO</button>  
+ </div>  
+ </div>  
+  
+ <div id="m-login-adm" class="modal" onclick="fecharNoBackdrop(event, 'm-login-adm')">  
+ <div class="modal-content">  
+ <span class="close" onclick="closeM('m-login-adm')">&times;</span>  
+ <h3 style="color:var(--blue); margin-bottom:20px; text-align:center;">ACESSO RESTRITO R1</h3>  
+ <input type="email" id="login-email" placeholder="E-mail Administrativo">  
+ <input type="password" id="login-senha" placeholder="Senha">  
+ <button class="btn-main" onclick="executarLogin()">ENTRAR NO PAINEL</button>  
+ </div>  
+ </div>  
+  
+ <div id="m-admin" class="modal" onclick="fecharNoBackdrop(event, 'm-admin')">  
+ <div class="modal-content">  
+ <span class="close" onclick="closeM('m-admin')">&times;</span>  
+ <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">  
+ <h3>GESTÃO R1</h3>  
+ <button class="btn-tool" style="background:none; border:1px solid var(--red); color:var(--red); padding:5px 10px; border-radius:8px; cursor:pointer;" onclick="executarLogout()">SAIR 🚪</button>  
+ </div>  
+ <div class="adm-tabs">  
+ <button class="tab-btn active" onclick="openTab(event, 'adm-banner')">BANNER</button>  
+ <button class="tab-btn" onclick="openTab(event, 'adm-loja')">LOJAS</button>  
+ <button class="tab-btn" onclick="openTab(event, 'adm-prod')">PRODUTOS</button>  
+ </div>  
+ <div id="adm-banner" class="tab-content active">  
+ <input type="text" id="b-url" placeholder="URL da foto do banner">  
+ <button class="btn-main" onclick="salvarBanner()">SALVAR BANNER</button>  
+ </div>  
+ <div id="adm-loja" class="tab-content">  
+ <input type="hidden" id="edit-loja-id">  
+ <input type="text" id="l-n" placeholder="Nome da Loja">  
+ <input type="text" id="l-f" placeholder="URL da Logo">  
+ <input type="text" id="l-t" placeholder="Taxa Entrega">  
+ <input type="text" id="l-w" placeholder="WhatsApp">  
+ <input type="text" id="l-v" placeholder="Link do YouTube">  
+ <button id="btn-l-save" class="btn-main" onclick="salvarLoja()">CADASTRAR LOJA</button>  
+ <div id="lista-adm-loja" style="margin-top:20px;"></div>  
+ </div>  
+ <div id="adm-prod" class="tab-content">  
+ <input type="hidden" id="edit-prod-id">  
+ <select id="p-loja-id"></select>  
+ <input type="text" id="p-nome" placeholder="Produto">  
+ <input type="text" id="p-preco" placeholder="Preço">  
+ <input type="text" id="p-foto" placeholder="URL Foto">  
+ <button id="btn-p-save" class="btn-main" onclick="salvarProduto()">SALVAR PRODUTO</button>  
+ <div id="lista-adm-prod" style="margin-top:20px; max-height:250px; overflow-y:auto;"></div>  
+ </div>  
+ </div>  
+ </div>  
+  
+ <nav class="nav-bar">  
+ <button class="nav-item active" onclick="location.reload()"><div class="nav-item-box-active"><i class="fa-solid fa-house"></i><br>INÍCIO</div></button>  
+ <button class="nav-item" onclick="openM('m-guide')"><i class="fa-solid fa-store"></i><br>LOJAS</button>  
+ <button class="nav-item" onclick="alert('Nossos Serviços')"><i class="fa-solid fa-motorcycle"></i><br>SERVIÇOS</button>  
+ <button class="nav-item" onclick="alert('Ofertas da Semana')"><i class="fa-solid fa-tags"></i><br>OFERTAS</button>  
+ <button class="nav-item" onclick="window.location.href='https://wa.me/5518999999999'"><i class="fa-brands fa-whatsapp"></i><br>CONTATO</button>  
+ </nav>  
+   
+ <script>  
+ var config = {  
+ apiKey: "AIzaSyBUCEJY53y17EVElfbJCtcOPp5M_JveJkM",  
+ authDomain: "r1-delivery-1150e.firebaseapp.com",  
+ projectId: "r1-delivery-1150e",  
+ storageBucket: "r1-delivery-1150e.firebasestorage.app",  
+ messagingSenderId: "1071477174621",  
+ appId: "1:1071477174621:web:53a69463286f78a2964e52"  
+ };  
+ firebase.initializeApp(config);  
+ var db = firebase.firestore();  
+ var auth = firebase.auth();  
+   
+ function init() {  
+ // Se existirem dados reais no Firestore, eles carregam dinamicamente aqui
+ db.collection("lojas").onSnapshot(function(snap) {  
+ var h = ""; var s = ""; var adm = "";  
+ snap.forEach(function(doc) {  
+ var l = doc.data();  
+ h += '<div style="background:#111; padding:15px; border-radius:16px; text-align:center; border:1px solid #222; cursor:pointer;" onclick="alert(\'Abrindo loja: \'+ \''+l.nome+'\')">';  
+ h += '<img src="' + l.foto + '" style="width:55px; height:55px; border-radius:50%; object-fit:cover; border:2px solid var(--blue); margin-bottom:8px;"><br><span style="font-size:11px; font-weight:bold;">' + l.nome + '</span></div>';  
+ s += '<option value="' + doc.id + '">' + l.nome + '</option>';  
+ adm += '<div class="item-row"><b>' + l.nome + '</b><div><button style="background:none; border:none; color:#fff; margin-right:10px;" onclick="editLoja(\''+doc.id+'\')">✏️</button><button style="background:none; border:none; color:var(--red);" onclick="del(\'lojas\',\''+doc.id+'\')">🗑️</button></div></div>';  
+ });  
+ if(h) document.getElementById('grid-lojas').innerHTML = h;  
+ if(s) document.getElementById('p-loja-id').innerHTML = s;  
+ if(adm) document.getElementById('lista-adm-loja').innerHTML = adm;  
+ });  
+ }  
+  
+ function scrollCarrossel(val) {  
+ document.getElementById('carrosselTrack').scrollLeft += val;  
+ }  
+  
+ function salvarSolicitacaoParceiro() {  
+ var nomeLoja = document.getElementById('p-loja-nome').value;  
+ var nomeResp = document.getElementById('p-resp-nome').value;  
+ var segmento = document.getElementById('p-segmento').value;  
+ var whatsapp = document.getElementById('p-whatsapp').value;  
+ var endereco = document.getElementById('p-endereco').value;  
+ if (!nomeLoja || !nomeResp || !whatsapp) return alert("Preencha os campos obrigatórios!");  
+ db.collection("solicitacoes_parceiros").add({  
+ loja: nomeLoja, responsavel: nomeResp, segmento: segmento, whatsapp: whatsapp, endereco: endereco, data: new Date().toISOString()  
+ }).then(function() {  
+ alert("Sua solicitação de parceiro foi salva com sucesso no Firestore!");  
+ closeM('m-join');  
+ }).catch(function(e) { alert("Erro: " + e.message); });  
+ }  
+  
+ var clicks = 0;  
+ function checkAdmin() {  
+ clicks++; if(clicks >= 5) { clicks = 0; if(auth.currentUser){ openM('m-admin'); }else{ openM('m-login-adm'); } }  
+ setTimeout(function(){ clicks = 0; }, 3000);  
+ }  
+  
+ function executarLogin() {  
+ var email = document.getElementById('login-email').value;  
+ var senha = document.getElementById('login-senha').value;  
+ auth.signInWithEmailAndPassword(email, senha).then(function() {  
+ closeM('m-login-adm'); openM('m-admin');  
+ }).catch(function(e) { alert("Erro: " + e.message); });  
+ }  
+  
+ function executarLogout() { auth.signOut().then(function() { closeM('m-admin'); alert("Desconectado."); }); }  
+ function openM(id) { document.getElementById(id).style.display = 'block'; }  
+ function closeM(id) { document.getElementById(id).style.display = 'none'; }  
+ function fecharNoBackdrop(e, id) { if(e.target === document.getElementById(id)) closeM(id); }  
+ function openTab(evt, tabId) {  
+ var i, content, tabs; content = document.getElementsByClassName("tab-content");  
+ for (i = 0; i < content.length; i++) content[i].classList.remove("active");  
+ tabs = document.getElementsByClassName("tab-btn");  
+ for (i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");  
+ document.getElementById(tabId).classList.add("active"); evt.currentTarget.classList.add("active");  
+ }  
+   
+ init();  
+ </script>  
+</body>  
+</html>
